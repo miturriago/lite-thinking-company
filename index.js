@@ -64,3 +64,29 @@ module.exports.createCompany = async (event) => {
     body: JSON.stringify({ message: "success", payload }),
   };
 };
+
+module.exports.getCompanies = async () => {
+  let resultRequest = {};
+  try {
+    resultRequest = await dynamoDb.scan(
+      process.env.TABLE_NAME + "-" + process.env.STAGE
+    );
+  } catch (error) {
+    console.log("Error get users: ", error);
+    return {
+      statusCode: 400,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
+    };
+  }
+  return {
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": true,
+    },
+    body: JSON.stringify(resultRequest),
+  };
+};
