@@ -1,0 +1,29 @@
+org: devlovelace
+app: lite-thinking-company
+service: lite-thinking-company
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:Query
+        - dynamodb:PutItem
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:us-east-1:523199501603:table/lite-thinking-dev"
+
+functions:
+  createCompany:
+    handler: index.handler
+    events:
+      - http:
+          path: company
+          method: post
+          cors: true # <-- CORS!
