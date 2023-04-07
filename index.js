@@ -4,7 +4,10 @@ const dynamoDb = require("./services/dynamo.service");
 const ajvO = require("ajv");
 const ajvRq = new ajvO();
 const schemaCreateCompanyRq = require("./schemas/rqCreateCompanySchema.json");
+const schemaGetCompanyRq = require("./schemas/rqGetCompanySchema.json");
+
 const validateCreateRq = ajvRq.compile(schemaCreateCompanyRq);
+const validateGetRq = ajvRq.compile(schemaGetCompanyRq);
 
 module.exports.createCompany = async (event) => {
   const data = JSON.parse(event.body);
@@ -79,6 +82,51 @@ module.exports.getCompanies = async () => {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": true,
       },
+    };
+  }
+  return {
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": true,
+    },
+    body: JSON.stringify(resultRequest),
+  };
+};
+
+module.exports.getCompany = async (event) => {
+  const data = JSON.parse(event.body);
+  let valid = validateGetRq(data);
+  if (!valid) {
+    return {
+      statusCode: 406,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
+      body: JSON.stringify({
+        message: "Empty fields are not accepted",
+        details: validateGetRq.errors[0],
+      }),
+    };
+  }
+
+  const { nit } = data;
+  let resultRequest;
+  try {
+    resultRequest = await dynamoDb.scanItem(
+      nit,
+      process.env.TABLE_NAME + "-" + process.env.STAGE
+    );
+  } catch (error) {
+    console.log("Error create: ", error);
+    return {
+      statusCode: 400,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
+      error: JSON.stringify(error),
     };
   }
   return {

@@ -41,3 +41,13 @@ functions:
           path: getCompanies
           method: post
           cors: true # <-- CORS!
+
+  getCompany:
+    handler: index.getCompany
+    timeout: 180
+    memorySize: 256
+    events:
+      - http:
+          path: getCompany
+          method: post
+          cors: true # <-- CORS!

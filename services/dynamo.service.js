@@ -47,7 +47,7 @@ module.exports.scanItem = async (nit, table_name) => {
     KeyConditionExpression: "PK = :PK and SK = :SK",
     ExpressionAttributeValues: {
       ":PK": "#COMPANIES",
-      ":SK": "##COMPANY#" + nit,
+      ":SK": "#COMPANY#" + nit,
     },
   };
   return new Promise((resolve, reject) => {
