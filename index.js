@@ -90,3 +90,33 @@ module.exports.getCompanies = async () => {
     body: JSON.stringify(resultRequest),
   };
 };
+
+module.exports.getCompany = async (event) => {
+  const data = JSON.parse(event.body);
+  const { nit } = data;
+  let resultRequest;
+  try {
+    resultRequest = await dynamoDb.scanItem(
+      nit,
+      process.env.TABLE_NAME + "-" + process.env.STAGE
+    );
+  } catch (error) {
+    console.log("Error create: ", error);
+    return {
+      statusCode: 400,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
+      error: JSON.stringify(error),
+    };
+  }
+  return {
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": true,
+    },
+    body: JSON.stringify(resultRequest),
+  };
+};
