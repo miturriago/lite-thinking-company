@@ -7,6 +7,8 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: us-east-1
+  timeout: 180
+  memorySize: 256
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -21,9 +23,31 @@ provider:
 
 functions:
   createCompany:
-    handler: index.handler
+    handler: index.createCompany
+    timeout: 180
+    memorySize: 256
     events:
       - http:
           path: company
+          method: post
+          cors: true # <-- CORS!
+
+  getCompanies:
+    handler: index.getCompanies
+    timeout: 180
+    memorySize: 256
+    events:
+      - http:
+          path: getCompanies
+          method: post
+          cors: true # <-- CORS!
+
+  getCompany:
+    handler: index.getCompany
+    timeout: 180
+    memorySize: 256
+    events:
+      - http:
+          path: getCompany
           method: post
           cors: true # <-- CORS!
