@@ -11,6 +11,13 @@ provider:
   memorySize: 256
 
   iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminInitiateAuth
+        - cognito-idp:AdminCreateUser
+        - cognito-idp:AdminSetUserPassword
+      Resource: "*"
+
     - Effect: "Allow"
       Action:
         - dynamodb:GetItem
@@ -31,6 +38,10 @@ functions:
           path: company
           method: post
           cors: true # <-- CORS!
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: arn:aws:cognito-idp:us-east-1:523199501603:userpool/us-east-1_152dyJXwj
 
   getCompanies:
     handler: index.getCompanies
@@ -41,6 +52,10 @@ functions:
           path: getCompanies
           method: post
           cors: true # <-- CORS!
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: arn:aws:cognito-idp:us-east-1:523199501603:userpool/us-east-1_152dyJXwj
 
   getCompany:
     handler: index.getCompany
@@ -51,3 +66,7 @@ functions:
           path: getCompany
           method: post
           cors: true # <-- CORS!
+          authorizer:
+            name: PrivateAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: arn:aws:cognito-idp:us-east-1:523199501603:userpool/us-east-1_152dyJXwj
