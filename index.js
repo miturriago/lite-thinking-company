@@ -138,3 +138,48 @@ module.exports.getCompany = async (event) => {
     body: JSON.stringify(resultRequest),
   };
 };
+
+module.exports.deleteInventory = async (event) => {
+  const data = JSON.parse(event.body);
+  let valid = validateGetRq(data);
+  if (!valid) {
+    return {
+      statusCode: 406,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
+      body: JSON.stringify({
+        message: "Empty fields are not accepted",
+        details: validateGetRq.errors[0],
+      }),
+    };
+  }
+
+  const { nit } = data;
+  let resultRequest;
+  try {
+    resultRequest = await dynamoDb.deleteItem(
+      { PK: "#COMPANIES", SK: "#COMPANY#" + nit },
+      process.env.TABLE_NAME + "-" + process.env.STAGE
+    );
+  } catch (error) {
+    console.log("Error create: ", error);
+    return {
+      statusCode: 400,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
+      error: JSON.stringify(error),
+    };
+  }
+  return {
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": true,
+    },
+    body: JSON.stringify(resultRequest),
+  };
+};
